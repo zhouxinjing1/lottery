@@ -4,24 +4,28 @@ namespace app\api\controller;
 use think\Request;
 use think\captcha\Captcha;
 use app\api\validate\Account as AccountValidate;
+use app\api\model\Account as AccountModel;
 
 class Login
 {
 
-    public function register(Request $request)
+    public function register(Request $request, AccountModel $account)
     {
         $data = $request->param();
+//
+//        $validate = new AccountValidate;
+//        if (!$validate->check($data)) {
+//            return custom_response(0, $validate->getError());
+//        }
+//
+//        if(!captcha_check($request->param('code'), $data['uuid'])){
+//            return custom_response(0, '验证码有误');
+//        }
 
-        $validate = new AccountValidate;
-        if (!$validate->check($data)) {
-            return custom_response(0, $validate->getError());
-        }
 
-        if(!captcha_check($request->param('code'), '1122')){
-            return custom_response(0, '验证码有误');
-        }
+        $account->allowField(true)->save($data);
 
-
+        var_dump($account->id);die;
 
     }
 
