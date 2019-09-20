@@ -14,4 +14,4 @@ Route::group('v', function () {
 
 
 
-})->middleware('InsertHead');
+})->middleware(['insertHead', 'CheckSign']);
