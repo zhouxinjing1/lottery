@@ -17,10 +17,11 @@ class Login
         $data = $request->param();
 
 
-
-            var_dump($request->path());die;
+        var_dump($request->path());
+        die;
         echo '<pre>';
-        var_dump($data);die;
+        var_dump($data);
+        die;
 //
 //        $validate = new AccountValidate;
 //        if (!$validate->check($data)) {
@@ -77,11 +78,12 @@ class Login
             $system->setKeyValue('privKey', $rsa->get_privKey());
         }
 
-        return array(
+        return [
             'key' => 0,
             'message' => '获取公钥成功',
             'response' => splitPublicKey($system->getKeyValue('pubKey'))
-        );
+            ];
+
     }
 
 

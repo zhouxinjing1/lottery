@@ -19,7 +19,8 @@
  * @param string $response
  * @return \think\response\Json
  */
-function custom_response($status = 0, $message = '成功', $data = [], $response = '') {
+function custom_response($status = 0, $message = '成功', $data = [], $response = '')
+{
     $response = array(
         'status' => $status,
         'message' => $message,
@@ -33,7 +34,12 @@ function custom_response($status = 0, $message = '成功', $data = [], $response
 
 function splitPublicKey($key)
 {
-//    str_replace('');
+
+    $starLen = strlen("-----BEGIN PUBLIC KEY-----\n");
+    $key = substr($key, $starLen, strlen($key));
+
+    $endLen = strlen("\n-----END PUBLIC KEY-----\n");
+    $key = substr($key, 0, strlen($key)-$endLen);
 
     return $key;
 }
