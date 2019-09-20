@@ -49,67 +49,31 @@ class Login
 
 
     /**
-     *  获取公共公钥
+     * 获取公钥
+     * @param System $system
+     * @return \think\response\Json
+     * @throws \think\Exception
+     * @throws \think\exception\PDOException
      */
     public function getPublicKey(System $system)
     {
+        $pubKey = $system->getKeyValue('pubKey');
 
-        $system = new System();
+        if (!openssl_pkey_get_public($pubKey)) {
+            $rsa = new Rsa(config('other.openssl_path'));
+            if ($rsa->error) {
+                return json(array('key' => 1, 'message' => 'openssh配置有误'));
+            }
 
-        var_dump($system->getKeyValue('pubKey'));die;
+            $system->setKeyValue('pubKey', $rsa->getPubKey());
+            $system->setKeyValue('privKey', $rsa->getPrivKey());
+        }
 
-        $system->setKeyValue('pubKey','123123123');
-
-
-//        $asymmetric = new Rsa(config('other.openssl_path'));
-
-
-
-//        $asymmetric = new Rsa(config('other.openssl_path'));
-//
-//
-//        var_dump($asymmetric->privKey);
-//
-//        var_dump($asymmetric->pubKey);die;
-
-
-
-        //2.加密解密数据 要加密的数据
-        $data = 'plaintext data goes here';
-
-
-//        //对$data进行加密 要加密的数据字符串 得到加密后的数据 加密所需要的公钥
-//        openssl_public_encrypt($data, $encrypted, $asymmetric->pubKey);
-//        echo base64_encode($encrypted);
-
-//        var_dump($encrypted);die;
-
-//对加密后的数据进行解密 解密的数据 得到解密后的数据 解密所需要的私钥
-//        $decrypted = base64_decode($encrypted);
-//        openssl_private_decrypt($encrypted, $decrypted, $asymmetric->privKey);
-//        echo $decrypted;  die;
-
-
-
-//        echo $asymmetric->public_encrypt($data);
-
-
-        //对加密后的数据进行解密 解密的数据 得到解密后的数据 解密所需要的私钥
-
-
-
-//        if ($asymmetric->error) {
-//            return json(array(
-//               'key' => 1,
-//               'message' => '获取公钥失败'
-//            ));
-//        }
-//
-//        return json(array(
-//           'key' => 0,
-//           'message' => "获取公钥成功",
-//           'response' => $asymmetric->pubKey
-//        ));
+        return json(array(
+            'key' => 0,
+            'message' => '获取公钥成功',
+            'response' => $system->getKeyValue('pubKey')
+        ));
     }
 
 }
