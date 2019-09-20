@@ -12,9 +12,10 @@ class CheckSign
     {
 
         $params = $request->param();
-
         if (!$this->_checkSign($params)) {
-            return redirect('/api/tools/msgError', '', 302);
+
+            return response(json_encode(['code'=>80001,'message'=>'参数无效'],JSON_UNESCAPED_UNICODE));
+
         };
 
         return $next($request);
@@ -30,14 +31,13 @@ class CheckSign
 
             $apiSecret = config('other.apiSecret');
             $ifySign = md5("apiSecret" . $apiSecret . "platformType" . $params['platformType'] . "siteCode" . $params['siteCode'] . 'siteId' . $params['siteId'] . 'timesamp' . $params['timesamp']);
+
             return $ifySign != strtolower($params['sign']) ? false : true;
 
         } catch (Exception $e) {
-
             return false;
 
         };
-
 
     }
 

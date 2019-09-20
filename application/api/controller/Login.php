@@ -1,4 +1,5 @@
 <?php
+
 namespace app\api\controller;
 
 use think\Request;
@@ -27,7 +28,8 @@ class Login
 
         $account->allowField(true)->save($data);
 
-        var_dump($account->id);die;
+        var_dump($account->id);
+        die;
 
     }
 
@@ -74,6 +76,31 @@ class Login
             'message' => '获取公钥成功',
             'response' => $system->getKeyValue('pubKey')
         ));
+    }
+
+
+    /**
+     *
+     *  验证用户名是否存在
+     */
+
+    public function isLoginName(Request $request, AccountModel $account)
+    {
+
+        $loginName = $request->param('loginName');
+        $data = $account->where(['username' => $loginName])->find();
+
+        if (is_null($data)) {
+
+            $res = ['code' => 10000, 'message' => '成功'];
+
+        } else {
+
+            $res = ['code' => 80001, 'message' => '用户名已存在'];
+
+        }
+
+        return $res;
     }
 
 }

@@ -15,21 +15,14 @@ class Tools
     public function initRegister()
     {
 
-        return config('other.regular');
+        return json_decode(config('other.regular'));
 
     }
 
 
-    /**
-     *
-     *  错误拦截
-     */
-    public function msgError(Request $request)
-    {
 
-        return ['code' => 80001, 'message' => '无效参数'];
 
-    }
+
 
 
 }
