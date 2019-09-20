@@ -13,7 +13,7 @@ class CheckSign
 
         $params = $request->param();
 
-        var_dump($request);exit();
+        var_dump($request->path());exit();
 
         if (!$this->_checkSign($params)) {
 

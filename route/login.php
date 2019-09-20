@@ -8,7 +8,7 @@ Route::group('v', function () {
     Route::get('user/getPublicKey', 'api/login/getPublicKey');
 
     // 注册
-    Route::post('register', 'api/login/register');
+    Route::get('register', 'api/login/register');
 
 
 

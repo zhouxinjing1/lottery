@@ -15,6 +15,12 @@ class Login
     public function register(Request $request, AccountModel $account)
     {
         $data = $request->param();
+
+
+
+            var_dump($request->path());die;
+        echo '<pre>';
+        var_dump($data);die;
 //
 //        $validate = new AccountValidate;
 //        if (!$validate->check($data)) {
