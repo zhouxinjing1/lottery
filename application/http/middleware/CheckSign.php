@@ -12,8 +12,7 @@ class CheckSign
     {
 
         $params = $request->param();
-
-        var_dump($request);exit();
+        unset($params['/'.$request->path()]); //过滤掉路由地址参数
 
         if (!$this->_checkSign($params)) {
 
@@ -26,6 +25,12 @@ class CheckSign
     }
 
 
+    /**
+     * @param null $params
+     * @return bool
+     *  sign动态验证方法
+     */
+
     public function _checkSign($params = null)
     {
 
@@ -36,25 +41,18 @@ class CheckSign
 
             $s = $params;
             $m = "apiSecret$apiSecret";
-
-
             unset($s['sign']);
             ksort($s);
-
-
 
             foreach ($s as $key => $item) {
                 $m = $m . $key . $item;
             }
 
             $ifySign = md5($m);
-
-            var_dump($ifySign);
-
-
             return $ifySign != strtolower($params['sign']) ? false : true;
 
         } catch (Exception $e) {
+
             return false;
 
         };
