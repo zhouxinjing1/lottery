@@ -16,13 +16,15 @@
  * @param int $status
  * @param array $data
  * @param string $message
+ * @param string $response
  * @return \think\response\Json
  */
-function custom_response($status = 1, $message = '成功', $data = []) {
+function custom_response($status = 0, $message = '成功', $data = [], $response = '') {
     $response = array(
         'status' => $status,
         'message' => $message,
         'data' => $data,
+        'response' => $response
     );
 
     return json($response);
