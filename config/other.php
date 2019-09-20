@@ -8,7 +8,7 @@
 
 return [
     // 公私钥配置路径
-    'openssl_path' => 'E:/PHP/phpstudy_pro/Extensions/Apache2.4.39/conf/openssl.cnf',
+    'openssl_path' => '/usr/local/openssl/openssl.cnf',
 
     // api密钥
     'apiSecret' => 'Q56#!25753!sah4+2Y/nspq#akto?ash#28',
