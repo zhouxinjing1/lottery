@@ -1,4 +1,5 @@
 <?php
+
 namespace app\api\controller;
 
 use think\Request;
@@ -27,7 +28,8 @@ class Login
 
         $account->allowField(true)->save($data);
 
-        var_dump($account->id);die;
+        var_dump($account->id);
+        die;
 
     }
 
@@ -56,13 +58,13 @@ class Login
 
         $system = new System();
 
-        var_dump($system->getKeyValue('pubKey'));die;
+        var_dump($system->getKeyValue('pubKey'));
+        die;
 
-        $system->setKeyValue('pubKey','123123123');
+        $system->setKeyValue('pubKey', '123123123');
 
 
 //        $asymmetric = new Rsa(config('other.openssl_path'));
-
 
 
 //        $asymmetric = new Rsa(config('other.openssl_path'));
@@ -71,7 +73,6 @@ class Login
 //        var_dump($asymmetric->privKey);
 //
 //        var_dump($asymmetric->pubKey);die;
-
 
 
         //2.加密解密数据 要加密的数据
@@ -90,12 +91,10 @@ class Login
 //        echo $decrypted;  die;
 
 
-
 //        echo $asymmetric->public_encrypt($data);
 
 
         //对加密后的数据进行解密 解密的数据 得到解密后的数据 解密所需要的私钥
-
 
 
 //        if ($asymmetric->error) {
@@ -110,6 +109,31 @@ class Login
 //           'message' => "获取公钥成功",
 //           'response' => $asymmetric->pubKey
 //        ));
+    }
+
+
+    /**
+     *
+     *  验证用户名是否存在
+     */
+
+    public function isLoginName(Request $request, AccountModel $account)
+    {
+
+        $loginName = $request->param('loginName');
+        $data = $account->where(['username' => $loginName])->find();
+
+        if (is_null($data)) {
+
+            $res = ['code' => 10000, 'message' => '成功'];
+
+        } else {
+
+            $res = ['code' => 80001, 'message' => '用户名已存在'];
+
+        }
+
+        return $res;
     }
 
 }
