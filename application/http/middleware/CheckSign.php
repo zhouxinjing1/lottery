@@ -12,9 +12,12 @@ class CheckSign
     {
 
         $params = $request->param();
+
+        var_dump($request);exit();
+
         if (!$this->_checkSign($params)) {
 
-            return response(json_encode(['code'=>80001,'message'=>'参数无效'],JSON_UNESCAPED_UNICODE));
+            return response(json_encode(['code' => 80001, 'message' => '参数无效'], JSON_UNESCAPED_UNICODE));
 
         };
 
@@ -30,7 +33,24 @@ class CheckSign
         try {
 
             $apiSecret = config('other.apiSecret');
-            $ifySign = md5("apiSecret" . $apiSecret . "platformType" . $params['platformType'] . "siteCode" . $params['siteCode'] . 'siteId' . $params['siteId'] . 'timesamp' . $params['timesamp']);
+
+            $s = $params;
+            $m = "apiSecret$apiSecret";
+
+
+            unset($s['sign']);
+            ksort($s);
+
+
+
+            foreach ($s as $key => $item) {
+                $m = $m . $key . $item;
+            }
+
+            $ifySign = md5($m);
+
+            var_dump($ifySign);
+
 
             return $ifySign != strtolower($params['sign']) ? false : true;
 
