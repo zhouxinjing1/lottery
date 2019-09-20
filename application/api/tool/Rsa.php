@@ -1,7 +1,7 @@
 <?php
 namespace app\api\tool;
 
-class Asymmetric
+class Rsa
 {
     //openssl_get_cipher_methods()
 

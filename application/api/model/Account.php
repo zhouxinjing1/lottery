@@ -4,6 +4,11 @@ namespace app\api\model;
 
 use think\Model;
 
+
+/** 账号表
+ * Class Account
+ * @package app\api\model
+ */
 class Account extends Model
 {
     protected $salt = 'asd!@340..12ccc';

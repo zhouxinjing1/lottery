@@ -5,7 +5,8 @@ use think\Request;
 use think\captcha\Captcha;
 use app\api\validate\Account as AccountValidate;
 use app\api\model\Account as AccountModel;
-use app\api\tool\Asymmetric;
+use app\api\tool\Rsa;
+use app\api\model\System;
 
 class Login
 {
@@ -50,26 +51,43 @@ class Login
     /**
      *  获取公共公钥
      */
-    public function getPublicKey()
+    public function getPublicKey(System $system)
     {
 
-        $asymmetric = new Asymmetric(config('other.openssl_path'));
+        $system = new System();
+
+        var_dump($system->getKeyValue('pubKey'));die;
+
+        $system->setKeyValue('pubKey','123123123');
 
 
-//        //2.加密解密数据 要加密的数据
+//        $asymmetric = new Rsa(config('other.openssl_path'));
+
+
+
+//        $asymmetric = new Rsa(config('other.openssl_path'));
+//
+//
+//        var_dump($asymmetric->privKey);
+//
+//        var_dump($asymmetric->pubKey);die;
+
+
+
+        //2.加密解密数据 要加密的数据
         $data = 'plaintext data goes here';
 
 
 //        //对$data进行加密 要加密的数据字符串 得到加密后的数据 加密所需要的公钥
-        openssl_public_encrypt($data, $encrypted, $asymmetric->pubKey);
+//        openssl_public_encrypt($data, $encrypted, $asymmetric->pubKey);
 //        echo base64_encode($encrypted);
 
 //        var_dump($encrypted);die;
 
 //对加密后的数据进行解密 解密的数据 得到解密后的数据 解密所需要的私钥
 //        $decrypted = base64_decode($encrypted);
-        openssl_private_decrypt($encrypted, $decrypted, $asymmetric->privKey);
-        echo $decrypted;  die;
+//        openssl_private_decrypt($encrypted, $decrypted, $asymmetric->privKey);
+//        echo $decrypted;  die;
 
 
 
