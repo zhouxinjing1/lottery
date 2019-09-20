@@ -59,7 +59,7 @@ class Login
     /**
      * 获取公钥
      * @param System $system
-     * @return \think\response\Json
+     * @return array
      * @throws \think\Exception
      * @throws \think\exception\PDOException
      */
@@ -70,18 +70,18 @@ class Login
         if (!openssl_pkey_get_public($pubKey)) {
             $rsa = new Rsa(config('other.openssl_path'));
             if ($rsa->error) {
-                return json(array('key' => 1, 'message' => 'openssh配置有误'));
+                return array('key' => 1, 'message' => 'openssh配置有误');
             }
 
             $system->setKeyValue('pubKey', $rsa->get_pubKey());
             $system->setKeyValue('privKey', $rsa->get_privKey());
         }
 
-        return json(array(
+        return array(
             'key' => 0,
             'message' => '获取公钥成功',
-            'response' => $system->getKeyValue('pubKey')
-        ));
+            'response' => splitPublicKey($system->getKeyValue('pubKey'))
+        );
     }
 
 

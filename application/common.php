@@ -29,3 +29,11 @@ function custom_response($status = 0, $message = '成功', $data = [], $response
 
     return json($response);
 }
+
+
+function splitPublicKey($key)
+{
+//    str_replace('');
+
+    return $key;
+}
