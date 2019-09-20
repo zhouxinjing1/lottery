@@ -73,8 +73,8 @@ class Login
                 return json(array('key' => 1, 'message' => 'openssh配置有误'));
             }
 
-            $system->setKeyValue('pubKey', $rsa->getPubKey());
-            $system->setKeyValue('privKey', $rsa->getPrivKey());
+            $system->setKeyValue('pubKey', $rsa->get_pubKey());
+            $system->setKeyValue('privKey', $rsa->get_privKey());
         }
 
         return json(array(
