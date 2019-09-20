@@ -15,7 +15,7 @@ class Tools
     public function initRegister()
     {
 
-        return config('tools.regular');
+        return config('other.regular');
 
     }
 

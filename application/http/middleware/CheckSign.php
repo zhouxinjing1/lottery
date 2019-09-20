@@ -28,7 +28,7 @@ class CheckSign
 
         try {
 
-            $apiSecret = config('tools.apiSecret');
+            $apiSecret = config('other.apiSecret');
             $ifySign = md5("apiSecret" . $apiSecret . "platformType" . $params['platformType'] . "siteCode" . $params['siteCode'] . 'siteId' . $params['siteId'] . 'timesamp' . $params['timesamp']);
             return $ifySign != strtolower($params['sign']) ? false : true;
 
