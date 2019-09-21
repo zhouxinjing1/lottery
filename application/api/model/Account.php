@@ -35,4 +35,15 @@ class Account extends Model
     {
         return date('Y-m-d H:i:s', time());
     }
+
+
+    /**
+     * 验证用户名是否存在
+     * @param $name
+     * @return mixed
+     */
+    public function isExistUserName($name)
+    {
+        return $this->whereUsername($name)->find();
+    }
 }

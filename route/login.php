@@ -1,6 +1,6 @@
 <?php
 
-// 中间件 CheckSign InsertHead
+// 中间件 CheckSign InsertHead CheckToken
 Route::group('v', function () {
     // 注册验证合集
     Route::get('user/initRegister','api/login/initRegister');
@@ -20,4 +20,6 @@ Route::group('v', function () {
     // 登录
     Route::post('user/userLogin', 'api/login/userLogin');
 
-})->middleware(['InsertHead','CheckSign']);
+})->middleware(['CheckSign']);
+
+
