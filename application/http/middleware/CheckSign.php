@@ -10,34 +10,25 @@ class CheckSign
 
     public function handle($request, \Closure $next)
     {
-
         $params = $request->param();
-
-        unset($params['/'.$request->path()]); //过滤掉路由地址参数
+        unset($params['/'.$request->path()]);   //过滤掉路由地址参数
 
         if (!$this->_checkSign($params)) {
-
             return response(json_encode(['code' => 80001, 'message' => '参数无效'], JSON_UNESCAPED_UNICODE));
-
         };
 
         return $next($request);
-
     }
 
 
     /**
+     * sign 校验
      * @param null $params
      * @return bool
-     *  sign动态验证方法
      */
-
     public function _checkSign($params = null)
     {
-
-
         try {
-
             $apiSecret = config('other.apiSecret');
 
             $s = $params;
@@ -53,12 +44,7 @@ class CheckSign
             return $ifySign != strtolower($params['sign']) ? false : true;
 
         } catch (Exception $e) {
-
             return false;
-
-        };
-
+        }
     }
-
-
 }

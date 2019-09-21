@@ -13,6 +13,16 @@ class System extends Model
 {
     protected $table = 'system';
 
+     /**
+     * @param $k
+     * @return mixed|null
+     */
+    public static function getStaticValue($k)
+    {
+        $data = self::queryStaticKey($k);
+
+        return $data !== array() ? $data[0] : null;
+    }
 
     /**
      * 获取配置值
@@ -52,5 +62,15 @@ class System extends Model
     private function queryKey($k)
     {
         return $this->where(array('k' => $k))->column('v');
+    }
+
+    /**
+     * 查询是否存在
+     * @param $k
+     * @return array
+     */
+    private static function queryStaticKey($k)
+    {
+        return self::where(array('k' => $k))->column('v');
     }
 }

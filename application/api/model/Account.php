@@ -3,6 +3,8 @@
 namespace app\api\model;
 
 use think\Model;
+use app\api\tool\Rsa;
+use app\api\model\System;
 
 
 /** 账号表
@@ -11,8 +13,6 @@ use think\Model;
  */
 class Account extends Model
 {
-    protected $salt = 'asd!@340..12ccc';
-
     protected $insert = ['created_at'];
 
     protected $table = 'account';
@@ -24,7 +24,7 @@ class Account extends Model
      */
     public function setPasswordAttr($value)
     {
-        return md5(md5($value. $this->salt));
+        return Rsa::private_decrypt($value, System::getStaticValue('privKey'));
     }
 
     /**

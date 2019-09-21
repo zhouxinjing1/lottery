@@ -2,43 +2,96 @@
 
 namespace app\api\controller;
 
+use think\facade\Cache;
+use think\facade\Env;
 use think\Request;
 use think\captcha\Captcha;
 use app\api\validate\Account as AccountValidate;
 use app\api\model\Account as AccountModel;
 use app\api\tool\Rsa;
 use app\api\model\System;
+use app\api\tool\RuleAll;
 
+/**
+ * 登录 注册类
+ * Class Login
+ * @package app\api\controller
+ */
 class Login
 {
 
-    public function register(Request $request, AccountModel $account)
+    /**
+     * 注册
+     * @param Request $request
+     * @param AccountModel $account
+     * @return array
+     */
+    public function saveUser(Request $request, AccountModel $account)
     {
         $data = $request->param();
 
+        // 验证码校验
+        if(!captcha_check($request->param('verifyCode'), $data['verId']))
+            return custom_response(40102, '验证码有误');
 
-        var_dump($request->path());
-        die;
-        echo '<pre>';
-        var_dump($data);
-        die;
-//
-//        $validate = new AccountValidate;
-//        if (!$validate->check($data)) {
-//            return custom_response(0, $validate->getError());
-//        }
-//
-//        if(!captcha_check($request->param('code'), $data['uuid'])){
-//            return custom_response(0, '验证码有误');
-//        }
+        // 密码校验
+        $privKey = System::getStaticValue('privKey');
+        if (Rsa::private_decrypt($data['password2'], $privKey) !== Rsa::private_decrypt($data['password'], $privKey))
+            return custom_response(0, '两次密码不一致');
 
+
+        // 下面上级代理验证操作(忽略)
 
         $account->allowField(true)->save($data);
 
-        var_dump($account->id);
-        die;
-
+        return custom_response(1000,'操作成功');
     }
+
+
+    /**
+     * 登录
+     * @param Request $request
+     * @param AccountModel $account
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function userLogin(Request $request, AccountModel $account)
+    {
+        $data = $request->param();
+
+        // 验证码校验
+        if (cache($data['verId']) === false)
+            return custom_response(10134, '验证码失效,请刷新验证码');
+
+        if(!captcha_check($data['verifyCode'], $data['verId'])) {
+
+            $ErrorTimes = cache($data['verId']);
+            Cache::inc($data['verId'], 1);
+
+            return custom_response(40102, '验证码有误', [
+                'ErrorTimes' => $ErrorTimes
+            ]);
+        }
+
+        // 密码校验
+        $password = Rsa::private_decrypt($data['password'], System::getStaticValue('privKey'));
+        $accountData = $account->where(array('userName' => $data['userName'], 'password' => $password))->find();
+
+        if (is_null($accountData)) {
+            return custom_response(0, '密码错误');
+        }
+
+
+        //生成token
+
+
+
+        return custom_response(1000,'成功');
+    }
+
+
 
     /**
      * 获取登录验证码图片
@@ -51,9 +104,12 @@ class Login
 
         $captcha->codeSet = '0123456789';
         $captcha->length = 4;
+        $captcha->expire = 360;
+
+        //增加配置!用于验证是否过期
+        cache($request->param('verId'), 0, 360);
 
         return $captcha->entry($request->param('verId'));
-
     }
 
 
@@ -69,9 +125,9 @@ class Login
         $pubKey = $system->getKeyValue('pubKey');
 
         if (!openssl_pkey_get_public($pubKey)) {
-            $rsa = new Rsa(config('other.openssl_path'));
+            $rsa = new Rsa(Env::get('openssl_path'));
             if ($rsa->error) {
-                return array('key' => 1, 'message' => 'openssh配置有误');
+                return ['key' => 1, 'message' => 'openssh配置有误'];
             }
 
             $system->setKeyValue('pubKey', $rsa->get_pubKey());
@@ -88,24 +144,32 @@ class Login
 
 
     /**
-     *
-     *  验证用户名是否存在
+     * 注册验证合集
+     * @param RuleAll $ruleAll
+     * @return \think\response\Json
      */
+    public function initRegister(RuleAll $ruleAll)
+    {
+        return json($ruleAll->initRegister());
+    }
 
+
+    /**
+     * 验证用户名是否存在
+     * @param Request $request
+     * @param AccountModel $account
+     * @return array
+     */
     public function isLoginName(Request $request, AccountModel $account)
     {
-
         $loginName = $request->param('loginName');
-        $data = $account->where(['username' => $loginName])->find();
+
+        $data = $account->whereUsername($loginName)->find();
 
         if (is_null($data)) {
-
             $res = ['code' => 10000, 'message' => '成功'];
-
         } else {
-
             $res = ['code' => 80001, 'message' => '用户名已存在'];
-
         }
 
         return $res;

@@ -3,6 +3,11 @@ namespace app\api\tool;
 
 use think\facade\Log;
 
+/**
+ * 非对称加解密
+ * Class Rsa
+ * @package app\api\tool
+ */
 class Rsa
 {
     private $config = array(
@@ -59,7 +64,7 @@ class Rsa
      * @param $privKey 加密key
      * @return int
      */
-    public function private_decrypt($input, $privKey)
+    public static function private_decrypt($input, $privKey)
     {
         if (!openssl_pkey_get_private($privKey)) {
             Log::error('私钥PrivKey错误');
@@ -71,5 +76,7 @@ class Rsa
 
         return $decrypted;
     }
+
+
 
 }

@@ -13,25 +13,25 @@
 
 /**
  * 自定义返回格式
- * @param int $status
+ * @param int $code
  * @param array $data
  * @param string $message
- * @param string $response
- * @return \think\response\Json
+ * @return array
  */
-function custom_response($status = 0, $message = '成功', $data = [], $response = '')
+function custom_response($code = 0, $message = '成功', $data = [])
 {
-    $response = array(
-        'status' => $status,
+    return array(
+        'code' => $code,
         'message' => $message,
         'data' => $data,
-        'response' => $response
     );
-
-    return json($response);
 }
 
-
+/**
+ * 剔除公钥启始符
+ * @param $key
+ * @return bool|string
+ */
 function splitPublicKey($key)
 {
 
