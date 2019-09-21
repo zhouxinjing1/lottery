@@ -2,8 +2,10 @@
 
 namespace app\api\controller;
 
+use app\api\tool\Token;
 use think\facade\Cache;
 use think\facade\Env;
+use think\facade\Log;
 use think\Request;
 use think\captcha\Captcha;
 use app\api\validate\Account as AccountValidate;
@@ -30,21 +32,29 @@ class Login
     {
         $data = $request->param();
 
-        // 验证码校验
-        if(!captcha_check($request->param('verifyCode'), $data['verId']))
-            return custom_response(40102, '验证码有误');
-
         // 密码校验
         $privKey = System::getStaticValue('privKey');
         if (Rsa::private_decrypt($data['password2'], $privKey) !== Rsa::private_decrypt($data['password'], $privKey))
-            return custom_response(0, '两次密码不一致');
+            return custom_response(-1, '两次密码不一致');
+
+        if ($account->isExistUserName($request->param('userName')) !== null)
+            return custom_response(-1, '用户名已存在');
 
 
         // 下面上级代理验证操作(忽略)
 
-        $account->allowField(true)->save($data);
 
-        return custom_response(1000,'操作成功');
+
+
+
+        if (!$account->allowField(true)->save($data)) {
+            Log::error('注册用户失败');
+
+            return custom_response(500, '服务器故障');
+        }
+
+
+        return custom_response(1000,'操作成功', Token::createToken($account->id));
     }
 
 
@@ -84,11 +94,7 @@ class Login
         }
 
 
-        //生成token
-
-
-
-        return custom_response(1000,'成功');
+        return custom_response(1000,'成功', array('token' => Token::createToken($accountData['id'])));
     }
 
 
@@ -138,7 +144,7 @@ class Login
             'key' => 0,
             'message' => '获取公钥成功',
             'response' => splitPublicKey($system->getKeyValue('pubKey'))
-            ];
+        ];
 
     }
 
@@ -150,7 +156,7 @@ class Login
      */
     public function initRegister(RuleAll $ruleAll)
     {
-        return json($ruleAll->initRegister());
+        return $ruleAll->initRegister();
     }
 
 
@@ -162,11 +168,9 @@ class Login
      */
     public function isLoginName(Request $request, AccountModel $account)
     {
-        $loginName = $request->param('loginName');
+        $bool = $account->isExistUserName($request->param('loginName'));
 
-        $data = $account->whereUsername($loginName)->find();
-
-        if (is_null($data)) {
+        if (is_null($bool)) {
             $res = ['code' => 10000, 'message' => '成功'];
         } else {
             $res = ['code' => 80001, 'message' => '用户名已存在'];

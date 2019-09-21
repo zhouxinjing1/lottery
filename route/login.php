@@ -1,6 +1,6 @@
 <?php
 
-// 中间件 CheckSign InsertHead
+// 中间件 CheckSign InsertHead CheckToken
 Route::group('v', function () {
     // 注册验证合集
     Route::get('/user/initRegister','api/login/initRegister');
@@ -8,11 +8,6 @@ Route::group('v', function () {
     // 用户名是否可用
     Route::get('/user/existLoginName','api/login/isLoginName');
 
-})->middleware(['CheckSign']);
-
-
-
-Route::group('v', function (){
     // 获取公钥
     Route::get('user/getPublicKey', 'api/login/getPublicKey');
 
@@ -25,4 +20,5 @@ Route::group('v', function (){
     // 登录
     Route::post('user/userLogin', 'api/login/userLogin');
 
-})->middleware(['InsertHead']);
+})->middleware(['CheckSign']);
+
