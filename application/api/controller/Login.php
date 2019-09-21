@@ -87,7 +87,10 @@ class Login
 
         if (is_null($accountData)) {
             Cache::inc($data['verId'], 1);
-            return custom_response(0, '密码错误');
+            $ErrorTimes = cache($data['verId']);
+            return custom_response(0, '密码错误',[
+                'ErrorTimes' => $ErrorTimes
+            ]);
         }
 
 
