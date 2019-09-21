@@ -69,7 +69,7 @@ class Login
         $data = $request->param();
         $ErrorTimes = cache($data['verId']);
 
-        if ($ErrorTimes >= 3) {
+        if ($ErrorTimes >= 3) { //判断是否存在试错级别
             // 验证码校验
             if (cache($data['verId']) === false)
                 return custom_response(10134, '验证码失效,请刷新验证码');
@@ -86,9 +86,9 @@ class Login
         $accountData = $account->where(array('userName' => $data['userName'], 'password' => $password))->find();
 
         if (is_null($accountData)) {
-            Cache::inc($data['verId'], 1);
+            Cache::inc($data['verId'], 1); //增加试错次数
             $ErrorTimes = cache($data['verId']);
-            return custom_response(0, '密码错误',[
+            return custom_response(0, '密码错误', [
                 'ErrorTimes' => $ErrorTimes
             ]);
         }
