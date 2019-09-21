@@ -44,9 +44,6 @@ class Login
         // 下面上级代理验证操作(忽略)
 
 
-
-
-
         if (!$account->allowField(true)->save($data)) {
             Log::error('注册用户失败');
 
@@ -54,7 +51,7 @@ class Login
         }
 
 
-        return custom_response(1000,'操作成功', Token::createToken($account->id));
+        return custom_response(1000, '操作成功', Token::createToken($account->id));
     }
 
 
@@ -70,19 +67,18 @@ class Login
     public function userLogin(Request $request, AccountModel $account)
     {
         $data = $request->param();
+        $ErrorTimes = cache($data['verId']);
 
-        // 验证码校验
-        if (cache($data['verId']) === false)
-            return custom_response(10134, '验证码失效,请刷新验证码');
+        if ($ErrorTimes >= 3) {
+            // 验证码校验
+            if (cache($data['verId']) === false)
+                return custom_response(10134, '验证码失效,请刷新验证码');
 
-        if(!captcha_check($data['verifyCode'], $data['verId'])) {
-
-            $ErrorTimes = cache($data['verId']);
-            Cache::inc($data['verId'], 1);
-
-            return custom_response(40102, '验证码有误', [
-                'ErrorTimes' => $ErrorTimes
-            ]);
+            if (!captcha_check($data['verifyCode'], $data['verId'])) {
+                return custom_response(40102, '验证码有误', [
+                    'ErrorTimes' => $ErrorTimes
+                ]);
+            }
         }
 
         // 密码校验
@@ -90,13 +86,13 @@ class Login
         $accountData = $account->where(array('userName' => $data['userName'], 'password' => $password))->find();
 
         if (is_null($accountData)) {
+            Cache::inc($data['verId'], 1);
             return custom_response(0, '密码错误');
         }
 
 
-        return custom_response(1000,'成功', array('token' => Token::createToken($accountData['id'])));
+        return custom_response(1000, '成功', array('token' => Token::createToken($accountData['id'])));
     }
-
 
 
     /**
