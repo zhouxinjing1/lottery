@@ -69,8 +69,7 @@ class Login
         $data = $request->param();
         $ErrorTimes = (int)cache($data['userName']);
 
-        if ($ErrorTimes >= 1 && $ErrorTimes < 6) { //判断是否存在试错级别
-
+        if ($ErrorTimes >= 1 && $ErrorTimes < 6 || $data['verifyCode'] != "") { //判断是否存在试错级别
 
             // 验证码校验
             if (cache($data['verId']) === false) {

@@ -15,6 +15,6 @@ class RuleAll
      */
     public function initRegister()
     {
-        return config('rule.regular');
+        return json_decode(config('rule.regular'));
     }
 }
