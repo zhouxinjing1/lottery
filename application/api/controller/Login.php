@@ -67,12 +67,17 @@ class Login
     public function userLogin(Request $request, AccountModel $account)
     {
         $data = $request->param();
-        $ErrorTimes = cache($data['userName']);
+        $ErrorTimes = (int)cache($data['userName']);
 
-        if (!$ErrorTimes && $ErrorTimes >= 3 && $ErrorTimes < 6) { //判断是否存在试错级别
+        if ($ErrorTimes >= 1 && $ErrorTimes < 6) { //判断是否存在试错级别
+
+
             // 验证码校验
-            if (cache($data['verId']) === false)
+            if (cache($data['verId']) === false) {
+
                 return custom_response(10134, '验证码失效,请刷新验证码');
+
+            }
 
             if (!captcha_check($data['verifyCode'], $data['verId'])) {
                 return custom_response(40102, '验证码有误', [
@@ -83,7 +88,10 @@ class Login
         } elseif ($ErrorTimes >= 6) { //试错级别顶级 冻结账号处理
 
 
+            return custom_response(10134, '账号已被冻结');
+
         }
+
 
         // 密码校验
         $password = Rsa::private_decrypt($data['password'], System::getStaticValue('privKey'));
@@ -92,12 +100,12 @@ class Login
         if (is_null($accountData)) {
             Cache::inc($data['userName'], 1); //增加试错次数
             $ErrorTimes = cache($data['userName']);
-            return custom_response(0, '密码错误', [
+            return custom_response(0, '账号或密码错误,当前错误次数' . $ErrorTimes . '次,若达到6次将被冻结', [
                 'ErrorTimes' => $ErrorTimes
             ]);
         }
 
-
+        Cache::set($data['userName'], 0); // 登录成功初始化试错
         return custom_response(1000, '成功', array('token' => Token::createToken($accountData['id'])));
     }
 
