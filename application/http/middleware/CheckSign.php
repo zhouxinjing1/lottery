@@ -11,7 +11,7 @@ class CheckSign
     public function handle($request, \Closure $next)
     {
         $params = $request->param();
-        unset($params['/'.$request->path()]);   //过滤掉路由地址参数
+        unset($params['/' . $request->path()]);   //过滤掉路由地址参数
 
         if (!$this->_checkSign($params)) {
             return response(json_encode(['code' => 80001, 'message' => '参数无效'], JSON_UNESCAPED_UNICODE));
@@ -29,17 +29,22 @@ class CheckSign
     public function _checkSign($params = null)
     {
         try {
-            $apiSecret = config('other.apiSecret');
 
+            //过滤需要被组合的参数
             $s = $params;
-            $m = "apiSecret$apiSecret";
             unset($s['sign']);
+
+            //排序键值对
             ksort($s);
 
+            //组合加密sign
+            $apiSecret = config('other.apiSecret');
+            $m = "apiSecret$apiSecret";
             foreach ($s as $key => $item) {
                 $m = $m . $key . $item;
             }
 
+            //MD5比较sign
             $ifySign = md5($m);
             return $ifySign != strtolower($params['sign']) ? false : true;
 

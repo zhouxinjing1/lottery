@@ -67,9 +67,9 @@ class Login
     public function userLogin(Request $request, AccountModel $account)
     {
         $data = $request->param();
-        $ErrorTimes = cache($data['verId']);
+        $ErrorTimes = cache($data['userName']);
 
-        if ($ErrorTimes >= 3) { //判断是否存在试错级别
+        if (!$ErrorTimes && $ErrorTimes >= 3 && $ErrorTimes < 6) { //判断是否存在试错级别
             // 验证码校验
             if (cache($data['verId']) === false)
                 return custom_response(10134, '验证码失效,请刷新验证码');
@@ -79,6 +79,10 @@ class Login
                     'ErrorTimes' => $ErrorTimes
                 ]);
             }
+
+        } elseif ($ErrorTimes >= 6) { //试错级别顶级 冻结账号处理
+
+
         }
 
         // 密码校验
@@ -86,8 +90,8 @@ class Login
         $accountData = $account->where(array('userName' => $data['userName'], 'password' => $password))->find();
 
         if (is_null($accountData)) {
-            Cache::inc($data['verId'], 1); //增加试错次数
-            $ErrorTimes = cache($data['verId']);
+            Cache::inc($data['userName'], 1); //增加试错次数
+            $ErrorTimes = cache($data['userName']);
             return custom_response(0, '密码错误', [
                 'ErrorTimes' => $ErrorTimes
             ]);
@@ -99,7 +103,7 @@ class Login
 
 
     /**
-     * 获取登录验证码图片
+     * 获取验证码
      * @param Request $request
      * @return \think\Response
      */
