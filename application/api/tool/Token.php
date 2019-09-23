@@ -6,9 +6,9 @@ use \Firebase\JWT\JWT;
 
 class Token
 {
-    static $key = '12!a@aas2df&&12-3123';
+    private static $key = '12!a@aas2df&&12-3123';
 
-    static $expire = 60 * 60 * 24;
+    private static $expire = 60 * 60 * 24;
 
     /**
      * 创建token
