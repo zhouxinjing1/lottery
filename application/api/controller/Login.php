@@ -69,7 +69,7 @@ class Login
         $data = $request->param();
         $ErrorTimes = (int)cache($data['userName']);
 
-        if ($ErrorTimes >= 1 && $ErrorTimes < 6 || $data['verifyCode'] != "") { //判断是否存在试错级别
+        if ($ErrorTimes >= 1 && $ErrorTimes < 6) { //判断是否存在试错级别
 
             // 验证码校验
             if (cache($data['verId']) === false) {
@@ -80,6 +80,7 @@ class Login
 
             if (!captcha_check($data['verifyCode'], $data['verId'])) {
                 return custom_response(40102, '验证码有误', [
+                    'needValid' => true,
                     'ErrorTimes' => $ErrorTimes
                 ]);
             }
@@ -87,7 +88,7 @@ class Login
         } elseif ($ErrorTimes >= 6) { //试错级别顶级 冻结账号处理
 
 
-            return custom_response(10134, '账号已被冻结');
+            return custom_response(40102, '账号已被冻结');
 
         }
 
@@ -100,12 +101,13 @@ class Login
             Cache::inc($data['userName'], 1); //增加试错次数
             $ErrorTimes = cache($data['userName']);
             return custom_response(0, '账号或密码错误,当前错误次数' . $ErrorTimes . '次,若达到6次将被冻结', [
+                'needValid' => true,
                 'ErrorTimes' => $ErrorTimes
             ]);
         }
 
         Cache::set($data['userName'], 0); // 登录成功初始化试错
-        return custom_response(1000, '成功', array('token' => Token::createToken($accountData['id'])));
+        return custom_response(1000, '成功', Token::createToken($accountData['id']));
     }
 
 
