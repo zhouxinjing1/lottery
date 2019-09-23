@@ -124,9 +124,6 @@ class Login
         $captcha->length = 4;
         $captcha->expire = 360;
 
-        //增加配置!用于验证是否过期
-        cache($request->param('verId'), 0, 360);
-
         return $captcha->entry($request->param('verId'));
     }
 
