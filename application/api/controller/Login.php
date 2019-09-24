@@ -115,7 +115,9 @@ class Login
      * 获取验证码
      * @param Request $request
      * @return \think\Response
+     * 
      */
+
     public function verifyCode(Request $request)
     {
         $captcha = new Captcha();
