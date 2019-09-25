@@ -11,4 +11,4 @@ Route::group('v', function () {
     // 获取个人资料
     Route::get('user/queryUserDetailInfo', 'api/account/getInformation');
 
-})->middleware([ 'CheckToken']);
+})->middleware(['CheckSign', 'CheckToken']);

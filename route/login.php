@@ -17,7 +17,7 @@ Route::group('v', function () {
     // 登录
     Route::post('user/userLogin', 'api/login/userLogin');
 
-});
+})->middleware(['CheckSign', 'CheckToken']);
 
 
 
