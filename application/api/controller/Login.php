@@ -73,9 +73,7 @@ class Login
 
             // 验证码校验
             if (cache($data['verId']) === false) {
-
                 return custom_response(10134, '验证码失效,请刷新验证码');
-
             }
 
             if (!captcha_check($data['verifyCode'], $data['verId'])) {
@@ -87,9 +85,7 @@ class Login
 
         } elseif ($ErrorTimes >= 6) { //试错级别顶级 冻结账号处理
 
-
             return custom_response(40102, '账号已被冻结');
-
         }
 
 

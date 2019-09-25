@@ -18,7 +18,7 @@
  * @param string $message
  * @return array
  */
-function custom_response($code = 0, $message = '成功', $data = [])
+function custom_response($code = 1000, $message = '操作成功', $data = [])
 {
     return array(
         'code' => $code,

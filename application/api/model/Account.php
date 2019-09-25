@@ -4,8 +4,6 @@ namespace app\api\model;
 
 use think\Model;
 use app\api\tool\Rsa;
-use app\api\model\System;
-
 
 /** 账号表
  * Class Account
@@ -16,6 +14,12 @@ class Account extends Model
     protected $insert = ['created_at'];
 
     protected $table = 'account';
+
+    // 观察者
+    protected static function init()
+    {
+        self::observe(\app\api\event\Account::class);
+    }
 
     /**
      * 密码

@@ -7,7 +7,6 @@ use think\Exception;
 class CheckSign
 {
 
-
     public function handle($request, \Closure $next)
     {
         $params = $request->param();
@@ -28,9 +27,8 @@ class CheckSign
      */
     public function _checkSign($params = null)
     {
+        //过滤需要被组合的参数
         try {
-
-            //过滤需要被组合的参数
             $s = $params;
             unset($s['sign']);
 
@@ -45,11 +43,10 @@ class CheckSign
             }
 
             //MD5比较sign
-            $ifySign = md5($m);
-            return $ifySign != strtolower($params['sign']) ? false : true;
-
-        } catch (Exception $e) {
+            return md5($m) != strtolower($params['sign']) ? false : true;
+        }catch (Exception $e) {
             return false;
         }
+
     }
 }
