@@ -38,7 +38,7 @@ class Account extends Controller
     {
         $param = $request->param();
 
-        $accountInfo = $accountInfo->where('a_id', $request->accountId)->find();
+        $accountInfo = $accountInfo->where('a_id', $request->accountId)->findOrFail();
         $accountInfo->nickName = $param['nickName'];
         $accountInfo->birthday = $param['birthday'];
         $accountInfo->qq = $param['qq'];
@@ -48,5 +48,21 @@ class Account extends Controller
         $accountInfo->save();
 
         return custom_response();
+    }
+
+    /**
+     * 获取个人资料
+     * @param Request $request
+     * @param AccountInfo $accountInfo
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function getInformation(Request $request, AccountInfo $accountInfo)
+    {
+        $data = $accountInfo->where('a_id', $request->accountId)->with('account')->findOrFail();
+
+        return custom_response(1000,'操作成功', manyToOneArray($data));
     }
 }

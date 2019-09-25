@@ -43,3 +43,29 @@ function splitPublicKey($key)
 
     return $key;
 }
+
+
+/**
+ * 二维数组转一维数组
+ * @param $data
+ * @return array
+ */
+function manyToOneArray($data)
+{
+    if (is_object($data)) {
+        $data = $data->toArray();
+    }
+
+    $newData = [];
+    foreach ($data as $k => $v) {
+        if(is_array($v)){
+            foreach ($v as $k1 => $v1) {
+             $newData[$k1] = $v1;
+            }
+        } else {
+            $newData[$k] = $v;
+        }
+    }
+
+    return $newData;
+}

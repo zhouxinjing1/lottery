@@ -14,10 +14,10 @@ class ErrorAll extends Handle
      */
     public function render(Exception $e)
     {
-        return json(array('code' => -1000, 'message' => '服务器异常'));
+//        return json(array('code' => -1000, 'message' => '服务器异常'));
 
         // 其他错误交给系统处理
-//        return parent::render($e);
+        return parent::render($e);
     }
 
 }

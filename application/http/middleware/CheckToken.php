@@ -3,6 +3,7 @@
 namespace app\http\middleware;
 
 use app\api\tool\Token;
+use app\api\model\Account;
 
 /**
  * token 校验
@@ -26,6 +27,11 @@ class CheckToken
         if (time() >= $decoded['exp']) {
             return response(json_encode(custom_response(-1,'token已过期')));
         }
+
+        if (empty(Account::find($decoded['data']->accountId))) {
+            return response(json_encode(custom_response(-1,'账号已不存在')));
+        }
+
 
         $request->accountId = $decoded['data']->accountId;
 

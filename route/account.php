@@ -8,4 +8,7 @@ Route::group('v', function () {
     // 修改个人资料
     Route::post('user/updateUserInfo', 'api/account/modifyInformation');
 
-})->middleware(['CheckSign', 'CheckToken']);
+    // 获取个人资料
+    Route::get('user/queryUserDetailInfo', 'api/account/getInformation');
+
+})->middleware([ 'CheckToken']);
